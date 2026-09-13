@@ -1,0 +1,290 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #121418;
+  color: #e2e8f0;
+}
+
+#app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Toolbar */
+.top-toolbar {
+  height: 48px;
+  background: #1a1e24;
+  border-bottom: 1px solid #2d3748;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+.brand span {
+  color: #3b82f6;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  background: #2b323c;
+  color: #edf2f7;
+  border: 1px solid #3f4a5a;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn:active, .btn.active {
+  background: #3b82f6;
+  border-color: #2563eb;
+}
+
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+}
+.file-btn input {
+  display: none;
+}
+
+/* Split Pane Viewport */
+.split-viewport {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 48px);
+  position: relative;
+  overflow: hidden;
+}
+
+.viewer-pane {
+  width: 50%;
+  height: 100%;
+  background: #181b20;
+  overflow: hidden;
+  position: relative;
+}
+
+.scroll-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px;
+  user-select: text;
+}
+
+.pane-divider {
+  width: 6px;
+  height: 100%;
+  background: #2d3748;
+  cursor: col-resize;
+  z-index: 50;
+}
+.pane-divider:hover {
+  background: #3b82f6;
+}
+
+.canvas-pane {
+  flex: 1;
+  height: 100%;
+  background: #0d0f12;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Documents & Accordion Fold */
+.doc-page {
+  background: #fdfdfd;
+  color: #1a202c;
+  padding: 40px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  position: relative;
+  user-select: text;
+}
+
+.doc-page h2 {
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  color: #2b6cb0;
+}
+
+.doc-page p {
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  user-select: text;
+}
+
+.doc-page p::selection, .doc-page span::selection {
+  background: #fde047;
+  color: #000;
+}
+
+.page-meta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #a0aec0;
+  margin-bottom: 8px;
+}
+
+.accordion-fold-strip {
+  background: repeating-linear-gradient(
+    45deg,
+    #232832,
+    #232832 10px,
+    #1b1f26 10px,
+    #1b1f26 20px
+  );
+  border: 1px dashed #4b5563;
+  color: #9ca3af;
+  padding: 12px;
+  margin-bottom: 24px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.highlight-pulse {
+  animation: pulse-yellow 1.4s ease-out 2;
+}
+
+@keyframes pulse-yellow {
+  0% { background: transparent; }
+  50% { background: rgba(250, 204, 21, 0.6); }
+  100% { background: transparent; }
+}
+
+/* Workspace Canvas */
+.infinite-board {
+  position: absolute;
+  width: 5000px;
+  height: 5000px;
+  transform-origin: 0 0;
+  background-image: radial-gradient(#252a34 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+#connectors-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+#ink-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 8;
+  pointer-events: none;
+}
+
+#ink-layer.drawing-active {
+  pointer-events: auto;
+}
+
+/* Excerpt Card */
+.excerpt-card {
+  position: absolute;
+  width: 250px;
+  background: #1e242d;
+  border: 1px solid #3b4252;
+  border-left: 4px solid #3b82f6;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  cursor: grab;
+  z-index: 10;
+  user-select: none;
+}
+
+.excerpt-card:active {
+  cursor: grabbing;
+}
+
+.card-badge {
+  display: inline-block;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.card-text {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #e2e8f0;
+}
+
+.card-port {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: crosshair;
+}
+
+/* Floating Action Bubble */
+.floating-bubble {
+  position: absolute;
+  background: #2563eb;
+  padding: 6px 12px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 200;
+}
+
+.floating-bubble button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
