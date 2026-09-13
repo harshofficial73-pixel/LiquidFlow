@@ -1,32 +1,45 @@
+:root {
+  --bg-primary: #121418;
+  --bg-secondary: #1a1e24;
+  --bg-card: #20252e;
+  --border-color: #2e3644;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #38bdf8;
+  --accent-highlight: rgba(253, 224, 71, 0.45);
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-main);
   user-select: none;
 }
 
-body, html {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: #121418;
-  color: #e2e8f0;
-}
-
-#app-container {
+#app {
   display: flex;
   flex-direction: column;
   width: 100vw;
   height: 100vh;
 }
 
-/* Toolbar */
-.top-toolbar {
+/* Header */
+#top-bar {
   height: 48px;
-  background: #1a1e24;
-  border-bottom: 1px solid #2d3748;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -34,165 +47,278 @@ body, html {
   z-index: 100;
 }
 
-.brand {
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-}
-.brand span {
-  color: #3b82f6;
+.left-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-.toolbar-actions {
+.logo {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+.logo b {
+  color: var(--accent-blue);
+}
+
+.btn-import {
+  display: inline-block;
+  background: var(--border-color);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-import input { display: none; }
+
+.center-controls, .right-controls {
   display: flex;
   gap: 8px;
 }
 
-.btn {
-  background: #2b323c;
-  color: #edf2f7;
-  border: 1px solid #3f4a5a;
-  padding: 6px 12px;
+.tool-btn {
+  background: #242933;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  padding: 5px 12px;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.btn:active, .btn.active {
-  background: #3b82f6;
+.tool-btn.active {
+  background: var(--accent-blue);
   border-color: #2563eb;
 }
 
-.file-btn {
-  display: inline-flex;
-  align-items: center;
-}
-.file-btn input {
-  display: none;
+.tool-btn.danger:hover {
+  background: #dc2626;
+  border-color: #b91c1c;
 }
 
-/* Split Pane Viewport */
-.split-viewport {
-  display: flex;
+/* Viewport Layout */
+#viewport {
   flex: 1;
+  display: flex;
   height: calc(100vh - 48px);
   position: relative;
   overflow: hidden;
 }
 
-.viewer-pane {
-  width: 50%;
+/* Document Pane (Left) */
+#document-column {
+  width: 48%;
   height: 100%;
-  background: #181b20;
-  overflow: hidden;
+  background: #181a1f;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
 }
 
-.scroll-container {
-  width: 100%;
-  height: 100%;
+#document-scroll-container {
+  flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  overflow-x: hidden;
+  padding: 32px 24px;
+  scroll-behavior: smooth;
+  touch-action: pan-y;
   user-select: text;
 }
 
-.pane-divider {
-  width: 6px;
-  height: 100%;
-  background: #2d3748;
-  cursor: col-resize;
-  z-index: 50;
-}
-.pane-divider:hover {
-  background: #3b82f6;
+.pages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
 }
 
-.canvas-pane {
+.doc-page-frame {
+  width: 100%;
+  max-width: 680px;
+  background: #ffffff;
+  color: #111827;
+  padding: 48px 40px;
+  border-radius: 4px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+  position: relative;
+  user-select: text;
+}
+
+.doc-page-frame h3 {
+  font-size: 1.15rem;
+  color: #1e3a8a;
+  margin-bottom: 16px;
+}
+
+.doc-page-frame p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin-bottom: 12px;
+  user-select: text;
+}
+
+.doc-page-frame p::selection, .doc-page-frame span::selection {
+  background: #fde047;
+  color: #000;
+}
+
+.page-header-tag {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 1px;
+}
+
+/* Accordion Fold Mechanics */
+.accordion-crease-container {
+  width: 100%;
+  max-width: 680px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #1e2430,
+    #1e2430 8px,
+    #141720 8px,
+    #141720 16px
+  );
+  border: 1px dashed #475569;
+  border-radius: 4px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
+  animation: foldIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes foldIn {
+  from { transform: scaleY(0.2); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+.accordion-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.7);
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.accordion-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.accordion-line {
+  width: 100%;
+  height: 2px;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.accordion-fold-label {
+  background: #0284c7;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+/* PDF.js Page Overlays */
+.pdf-page-wrapper {
+  position: relative;
+  background: white;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+}
+
+.textLayer {
+  opacity: 1 !important;
+  mix-blend-mode: multiply;
+}
+
+.textLayer span::selection {
+  background: #fde047 !important;
+  color: transparent !important;
+}
+
+/* Floating Extract Callout */
+.extract-bubble {
+  position: absolute;
+  z-index: 120;
+  transform: translate(-50%, -100%);
+  margin-top: -12px;
+}
+
+.extract-bubble button {
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  cursor: pointer;
+}
+
+/* Resizer Divider */
+.pane-resizer {
+  width: 6px;
+  height: 100%;
+  background: var(--border-color);
+  cursor: col-resize;
+  z-index: 40;
+}
+.pane-resizer:hover, .pane-resizer:active {
+  background: var(--accent-blue);
+}
+
+/* Canvas Pane (Right) */
+#canvas-column {
   flex: 1;
   height: 100%;
+  position: relative;
   background: #0d0f12;
+  overflow: hidden;
+}
+
+#workspace-viewport {
+  width: 100%;
+  height: 100%;
   position: relative;
   overflow: hidden;
   touch-action: none;
 }
 
-/* Documents & Accordion Fold */
-.doc-page {
-  background: #fdfdfd;
-  color: #1a202c;
-  padding: 40px;
-  border-radius: 6px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  position: relative;
-  user-select: text;
-}
-
-.doc-page h2 {
-  font-size: 1.15rem;
-  margin-bottom: 12px;
-  color: #2b6cb0;
-}
-
-.doc-page p {
-  line-height: 1.6;
-  font-size: 0.95rem;
-  margin-bottom: 12px;
-  user-select: text;
-}
-
-.doc-page p::selection, .doc-page span::selection {
-  background: #fde047;
-  color: #000;
-}
-
-.page-meta {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #a0aec0;
-  margin-bottom: 8px;
-}
-
-.accordion-fold-strip {
-  background: repeating-linear-gradient(
-    45deg,
-    #232832,
-    #232832 10px,
-    #1b1f26 10px,
-    #1b1f26 20px
-  );
-  border: 1px dashed #4b5563;
-  color: #9ca3af;
-  padding: 12px;
-  margin-bottom: 24px;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.highlight-pulse {
-  animation: pulse-yellow 1.4s ease-out 2;
-}
-
-@keyframes pulse-yellow {
-  0% { background: transparent; }
-  50% { background: rgba(250, 204, 21, 0.6); }
-  100% { background: transparent; }
-}
-
-/* Workspace Canvas */
-.infinite-board {
+#infinite-surface {
   position: absolute;
-  width: 5000px;
-  height: 5000px;
+  width: 10000px;
+  height: 10000px;
   transform-origin: 0 0;
-  background-image: radial-gradient(#252a34 1.5px, transparent 1.5px);
+  background-image: radial-gradient(#222733 1.5px, transparent 1.5px);
   background-size: 24px 24px;
 }
 
-#connectors-layer {
+#svg-connectors {
   position: absolute;
   top: 0;
   left: 0;
@@ -202,7 +328,7 @@ body, html {
   z-index: 5;
 }
 
-#ink-layer {
+#ink-canvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -212,79 +338,92 @@ body, html {
   pointer-events: none;
 }
 
-#ink-layer.drawing-active {
+#ink-canvas.pen-active {
   pointer-events: auto;
 }
 
-/* Excerpt Card */
+/* Interactive Excerpt Cards */
 .excerpt-card {
   position: absolute;
-  width: 250px;
-  background: #1e242d;
-  border: 1px solid #3b4252;
-  border-left: 4px solid #3b82f6;
-  border-radius: 6px;
+  width: 270px;
+  background: var(--bg-card);
+  border: 1px solid #374151;
+  border-left: 4px solid var(--accent-blue);
+  border-radius: 8px;
   padding: 12px;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
   cursor: grab;
   z-index: 10;
-  user-select: none;
+  transition: box-shadow 0.15s, border-color 0.15s;
 }
 
 .excerpt-card:active {
   cursor: grabbing;
 }
 
-.card-badge {
-  display: inline-block;
-  background: #3b82f6;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-bottom: 6px;
-  cursor: pointer;
+.excerpt-card.snapped {
+  border-left-color: #10b981;
 }
 
-.card-text {
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.backlink-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.backlink-badge:hover {
+  background: var(--accent-blue);
+  color: #fff;
+}
+
+.card-body {
   font-size: 0.85rem;
-  line-height: 1.4;
+  line-height: 1.45;
   color: #e2e8f0;
 }
 
-.card-port {
+/* Card Connector Port */
+.connector-port {
   position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #3b82f6;
-  border: 2px solid #fff;
+  width: 14px;
+  height: 14px;
+  background: var(--accent-blue);
+  border: 2px solid #ffffff;
   border-radius: 50%;
-  right: -6px;
+  right: -7px;
   top: 50%;
   transform: translateY(-50%);
   cursor: crosshair;
+  z-index: 20;
 }
 
-/* Floating Action Bubble */
-.floating-bubble {
-  position: absolute;
-  background: #2563eb;
-  padding: 6px 12px;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  z-index: 200;
+/* Temporary Document Highlight Flash */
+.source-highlight-pulse {
+  outline: 3px solid #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.35) !important;
+  border-radius: 3px;
+  animation: pulseFlash 1.6s ease-out 2;
 }
 
-.floating-bubble button {
-  background: none;
-  border: none;
-  color: white;
-  font-weight: 600;
-  font-size: 0.8rem;
-  cursor: pointer;
+@keyframes pulseFlash {
+  0% { background: rgba(56, 189, 248, 0.5); }
+  50% { background: rgba(253, 224, 71, 0.6); }
+  100% { background: rgba(56, 189, 248, 0.15); }
 }
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
