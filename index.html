@@ -8,80 +8,109 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="stylesheet" href="styles.css">
-  
-  <!-- Mozilla PDF.js CDN -->
+
+  <!-- Mozilla PDF.js & TextLayerBuilder -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   </script>
 </head>
 <body>
-  <div id="app-container">
-    <!-- Top Global Toolbar -->
-    <header class="top-toolbar">
-      <div class="brand">Liquid<span>Canvas</span></div>
-      <div class="toolbar-actions">
-        <label class="btn file-btn">
+  <div id="app">
+    <!-- Top Command Bar -->
+    <header id="top-bar">
+      <div class="left-brand">
+        <span class="logo">Liquid<b>Workspace</b></span>
+        <label class="btn-import">
+          <input type="file" id="pdf-input" accept="application/pdf">
           <span>Open PDF</span>
-          <input type="file" id="pdf-file-input" accept="application/pdf">
         </label>
-        <button id="btn-accordion" class="btn" title="Collapse intervening text">Accordion Fold</button>
-        <button id="btn-draw" class="btn" title="Toggle Apple Pencil / Ink">Pen Ink</button>
-        <button id="btn-reset-zoom" class="btn" title="Reset workspace canvas">Reset Canvas</button>
+      </div>
+
+      <div class="center-controls">
+        <button id="btn-accordion-toggle" class="tool-btn" title="Toggle accordion contract">
+          <span class="icon">⤡⤢</span> Collapse Distance
+        </button>
+        <button id="btn-highlight-mode" class="tool-btn active">
+          <span class="icon">🖍</span> Excerpt Mode
+        </button>
+        <button id="btn-pen-mode" class="tool-btn">
+          <span class="icon">✏️</span> Ink / Apple Pencil
+        </button>
+      </div>
+
+      <div class="right-controls">
+        <button id="btn-reset-canvas" class="tool-btn">Center Canvas</button>
+        <button id="btn-clear-canvas" class="tool-btn danger">Clear Board</button>
       </div>
     </header>
 
-    <!-- Main Workspace Split Pane -->
-    <main class="split-viewport">
-      <!-- Left: PDF Document Viewer -->
-      <section id="document-pane" class="viewer-pane">
-        <div id="pdf-render-container" class="scroll-container">
-          <div id="default-demo-doc" class="sample-page-stack">
-            <article class="doc-page" data-page-number="1">
-              <div class="page-meta">PAGE 1</div>
-              <h2>Section 1: Jurisdictional Foundations</h2>
-              <p class="selectable-paragraph" data-source-id="p1-para1">
-                The invocation of appellate jurisdiction under Article 136 of the Constitution requires substantive proof of legal arbitrariness. In procedural review, statutory mandates governing fundamental rights take absolute precedence over intermediate agency determinations.
-              </p>
-              <p class="selectable-paragraph" data-source-id="p1-para2">
-                A prima facie demonstration of non-application of mind invalidates executive detention without necessitating full discovery proceedings.
-              </p>
-            </article>
+    <!-- Main Dual Split-Screen Viewport -->
+    <div id="viewport">
+      <!-- Left: Dynamic Document Reader -->
+      <section id="document-column">
+        <!-- Touch Accordion Crumple Overlay indicator -->
+        <div id="accordion-indicator" class="accordion-indicator hidden">
+          <div class="accordion-line top"></div>
+          <div class="accordion-fold-label">PINCH TO COLLAPSE</div>
+          <div class="accordion-line bottom"></div>
+        </div>
 
-            <div class="accordion-fold-strip hidden" id="fold-1-2">
-              <div class="fold-lines"></div>
-              <span>Pages 2 - 3 Folded (Pinch to expand)</span>
-              <div class="fold-lines"></div>
+        <div id="document-scroll-container">
+          <!-- Fallback demo pages rendered if no PDF is uploaded -->
+          <div id="demo-pages" class="pages-container">
+            <div class="doc-page-frame" data-page="1">
+              <div class="page-header-tag">Page 1</div>
+              <h3>Constitutional Jurisprudence & Fundamental Freedoms</h3>
+              <p>The doctrine of non-arbitrariness guarantees protection under equal protection clauses across all sovereign executive actions. When statutory authorities issue directives without reasoned consideration, the action remains inherently vulnerable to judicial review.</p>
+              <p>Article 21 guarantees that no person shall be deprived of personal liberty except according to fair, just, and non-oppressive procedures established by law.</p>
             </div>
 
-            <article class="doc-page" data-page-number="4">
-              <div class="page-meta">PAGE 4</div>
-              <h2>Section 4: Concluding Directions</h2>
-              <p class="selectable-paragraph" data-source-id="p4-para1">
-                Consequently, the respondent authority must tender complete compliance within twenty-one days of this order. No further stay applications will be entertained in the interim period.
-              </p>
-            </article>
+            <!-- Interleaved Accordion Crease -->
+            <div class="accordion-crease-container hidden" data-after-page="1">
+              <div class="accordion-pleat"></div>
+              <div class="accordion-pleat"></div>
+              <div class="accordion-badge">Pages 2–3 Compressed (Tap to Expand)</div>
+            </div>
+
+            <div class="doc-page-frame" data-page="4">
+              <div class="page-header-tag">Page 4</div>
+              <h3>Mandamus & Directions for Implementation</h3>
+              <p>The respondents are instructed to submit compliance affidavits within twenty-one days of service of this certified pronouncement. No further application for enlargement of timeline will be entertained in the interim period.</p>
+              <p>Non-compliance will result in contempt directives against the designated supervisory authorities.</p>
+            </div>
+          </div>
+
+          <!-- Dynamic PDF.js container -->
+          <div id="pdf-dynamic-pages" class="pages-container hidden"></div>
+        </div>
+
+        <!-- Extract Floating Callout -->
+        <div id="extract-bubble" class="extract-bubble hidden">
+          <button id="btn-extract-to-board">Pull Excerpt to Board ➔</button>
+        </div>
+      </section>
+
+      <!-- Pane Resizer Divider -->
+      <div id="pane-resizer" class="pane-resizer"></div>
+
+      <!-- Right: Infinite 2D Workspace -->
+      <section id="canvas-column">
+        <div id="workspace-viewport">
+          <div id="infinite-surface">
+            <!-- Dynamic SVG Bezier Link Layer -->
+            <svg id="svg-connectors"></svg>
+
+            <!-- Ink Annotations Layer for Apple Pencil -->
+            <canvas id="ink-canvas"></canvas>
+
+            <!-- Draggable Interactive Excerpt Cards & Clusters -->
+            <div id="cards-layer"></div>
           </div>
         </div>
-
-        <!-- Extract Floating Action Menu -->
-        <div id="extract-menu" class="floating-bubble hidden">
-          <button id="btn-extract-selection">Extract to Workspace ➔</button>
-        </div>
       </section>
-
-      <!-- Center Pane Resizer -->
-      <div id="pane-resizer" class="pane-divider"></div>
-
-      <!-- Right: Infinite Visual Canvas -->
-      <section id="workspace-pane" class="canvas-pane">
-        <div id="workspace-surface" class="infinite-board">
-          <svg id="connectors-layer"></svg>
-          <canvas id="ink-layer"></canvas>
-          <div id="cards-container"></div>
-        </div>
-      </section>
-    </main>
+    </div>
   </div>
 
   <script src="app.js"></script>
